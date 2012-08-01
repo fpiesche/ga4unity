@@ -1,5 +1,8 @@
 # Google Analytics for Unity3D, 2012 Florian Piesche / florian@yellowkeycard.net / @ektoutie
 
+CAVEAT: This will only work on its own for native builds. For Web Player builds, you will need
+  to add Google Analytics' ga.js to the page the game is embedded in.
+
 USAGE: drop in your assets folder. Attach to any GameObject as a Component.
    Call SetID method with your GA Tracking ID (UA-12345678-9) and the domain DeviceName
    you're using in GA. From then on, just call either of the two methods to log info/events

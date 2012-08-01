@@ -13,3 +13,10 @@ METHODS:
   LogEvent(EventCat as string, Event as string, EventLabel as string, EventValue as single)
       - logs an event to Google Analytics with the custom text/value as above.
 
+
+EXAMPLE:
+
+  self.gaScript.SetID("UA-12345678-9", "mydomain.com")
+  self.gaScript.LogInfo("myGame")
+  self.gaScript.LogEvent("myGame", "startGame", "", 0.0)
+  

@@ -1,18 +1,30 @@
 # Google Analytics for Unity3D, 2012 florian@yellowkeycard.net
 
 # CAVEAT: This will only work on its own for native builds. For Web Player builds, you will need
-#   to add Google Analytics' ga.js to the page the game is embedded in.
+#   to add Google Analytics' Javascript tracking code to the page the game is embedded in.
 
 # USAGE: drop in your assets folder. Attach to any GameObject as a Component.
 #   Call SetID method with your GA Tracking ID (UA-12345678-9) and the domain DeviceName
 #   you're using in GA. From then on, just call either of the two methods to log info/events
 #   to Google Analytics.
 
-# METHODS:
-# LogInfo(Prefix as string)
-#      - logs system info (OS, Device Name, Device Type) as events with category Prefix.
-# LogEvent(EventCat as string, Event as string, EventLabel as string, EventValue as single)
-#      - logs an event to Google Analytics with the custom text/value as above.
+#METHODS:
+#
+#  SetID(TrackingID as string, Domain as string), returns boolean
+#      Sets tracking up with your Google Analytics tracking ID (which you can find in your
+#      GA account) and the domain name to log things for. Returns false if there is no
+#      internet connection available (and thus tracking won't work).
+#
+#  LogInfo(Prefix as string)
+#      logs system info (OS, Device Name, Device Type) as events with category Prefix.
+#      Prefix should be your game title or some other easily recognisable tag.
+#
+#  LogEvent(EventCat as string, Event as string, EventLabel as string, EventValue as single)
+#      logs an event to Google Analytics with the custom text/value as above.
+#      Example: LogEvent("MyGameTitle", "StartLevel", "Level1", 1) to log the first
+#                 attempt at starting Level 1 of your game.
+#               LogEvent("MyGameTitle", "PlayerDeath", "Orc", 42.3) to log a player's death
+#                 to an Orc after 42.3 seconds of gameplay.
 
 import UnityEngine
 

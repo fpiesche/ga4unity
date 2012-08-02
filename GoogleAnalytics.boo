@@ -10,9 +10,9 @@
 
 # METHODS:
 # LogInfo(Prefix as string)
-#     - logs system info (OS, Device Name, Device Type) as events with category Prefix.
+#      - logs system info (OS, Device Name, Device Type) as events with category Prefix.
 # LogEvent(EventCat as string, Event as string, EventLabel as string, EventValue as single)
-#     - logs an event to Google Analytics with the custom text/value as above.
+#      - logs an event to Google Analytics with the custom text/value as above.
 
 import UnityEngine
 
@@ -53,6 +53,10 @@ class GoogleAnalytics (MonoBehaviour):
 		self.RequestParameters["RequestType"] = "utmt=event"
 		self.RequestParameters["utmhid"] = "utmhid=" + Mathf.RoundToInt(Random.value * 2147483647).ToString()
 
+		if Application.internetReachability == NetworkReachability.NotReachable:
+			Debug.Log("Internet not available, skipping init.")
+			return false
+
 		if self.DebugInfo == true:
 			Debug.Log("Firing initial pageview...")
 
@@ -66,6 +70,7 @@ class GoogleAnalytics (MonoBehaviour):
 			Application.ExternalCall("pageTracker._trackPageview")
 
 		self.Initialised = true
+		return true
 
 
 	def GetCookieData (ShortCookie as bool):
@@ -86,6 +91,8 @@ class GoogleAnalytics (MonoBehaviour):
 
 
 	def LogEvent (EventCat as string, Event as string, EventLabel as string, EventValue as single):
+		#event: __utm.gif?utmwv=5.2.5&utmac=UA-18145833-1&utmhn=yellowkeycard.net&utmt=event&utms=2&utmn=1587962506&utmcc=__utma%3D76772381.2024588720.1343825763.1343825763.1343825763.1%3B&utme=5(testCat*testAction*testLabel)(42)&utmcs=-&utmr=-&utmul=&utmfl=-&utmje=-&utmsr=1024x768&utmhid=1517923502
+
 		if Application.platform != RuntimePlatform.WindowsWebPlayer and Application.platform != RuntimePlatform.OSXWebPlayer:
 			if self.Initialised == false:
 				Debug.LogError("ERROR: Google Analytics library not initialised. Call SetID() first!")
@@ -94,19 +101,23 @@ class GoogleAnalytics (MonoBehaviour):
 				if self.DebugInfo == true:
 					Debug.Log("Logging event...")
 				EventData = "utme=" + WWW.EscapeURL("5(" + EventCat + "*" + Event + "*" + EventLabel + ")(" + EventValue.ToString() + ")")
-				RequestURL = self.GAImageURL + self.GetCookieData(true) + EventData
+				RequestURL = self.GAImageURL + self.GetCookieData(true) + "&" + EventData
 				EventParameters = ["AnalyticsVersion", "TrackingID", "Domain", "RequestType", "RequestNum", "RandomNum", "CookieData", "CharacterSet", "ReferrerURL", "Language", "FlashVersion", "JavaEnabled", "ScreenResolution", "utmhid"]
 				for param in EventParameters:
 						RequestURL += "&" + self.RequestParameters[param]
 				StartCoroutine(makeRequest(RequestURL))
 		else:
 			Application.ExternalCall("pageTracker._trackEvent", EventCat, Event, EventLabel, EventValue.ToString())
-		if self.DebugInfo == true:
-			Debug.Log("Event logged.")
 
 
 	def makeRequest (RequestURL as string) as IEnumerator:
 		if self.DebugInfo == true:
-			Debug.Log(RequestURL)
-		pageviewRequest = WWW(RequestURL)
-		yield pageviewRequest
+			Debug.Log("Google Analytics request: " + RequestURL)
+		if Application.internetReachability == NetworkReachability.NotReachable:
+			if self.DebugInfo == true:
+				Debug.Log("No internet connectivity; ignoring request")
+			return false
+		else:
+			pageviewRequest = WWW(RequestURL)
+			yield pageviewRequest
+		return true

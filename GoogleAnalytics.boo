@@ -18,7 +18,7 @@ import UnityEngine
 
 class GoogleAnalytics (MonoBehaviour):
 
-	public DebugInfo as bool = true
+	public DebugInfo as bool = false
 	public GAImageURL as string = "http://www.google-analytics.com/__utm.gif?"
 	public Initialised as bool = false
 	public RequestParameters as Hashtable = {}
@@ -91,8 +91,6 @@ class GoogleAnalytics (MonoBehaviour):
 
 
 	def LogEvent (EventCat as string, Event as string, EventLabel as string, EventValue as single):
-		#event: __utm.gif?utmwv=5.2.5&utmac=UA-18145833-1&utmhn=yellowkeycard.net&utmt=event&utms=2&utmn=1587962506&utmcc=__utma%3D76772381.2024588720.1343825763.1343825763.1343825763.1%3B&utme=5(testCat*testAction*testLabel)(42)&utmcs=-&utmr=-&utmul=&utmfl=-&utmje=-&utmsr=1024x768&utmhid=1517923502
-
 		if Application.platform != RuntimePlatform.WindowsWebPlayer and Application.platform != RuntimePlatform.OSXWebPlayer:
 			if self.Initialised == false:
 				Debug.LogError("ERROR: Google Analytics library not initialised. Call SetID() first!")
@@ -116,8 +114,7 @@ class GoogleAnalytics (MonoBehaviour):
 		if Application.internetReachability == NetworkReachability.NotReachable:
 			if self.DebugInfo == true:
 				Debug.Log("No internet connectivity; ignoring request")
-			return false
+			return
 		else:
 			pageviewRequest = WWW(RequestURL)
 			yield pageviewRequest
-		return true
